@@ -1,0 +1,100 @@
+Structs:
+
+public ActionForward exportExcel(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
+    String[] ids = //组织数据。
+    response.reset();
+    response.setContentType("application/vn.ms-excel");
+    response.setCharacterEncoding("utf-8");
+    String filename = RmDateHelper.getJoinedSysDateTime() + "export.xls";//文件名
+    response.setHeader("content-Disposition", "attachment;filename=" + URLEncoder.encode(filename, "utf-8"));
+    OutputStream out = response.getOutputStream();//获得ｒｅｓｐｏｎｓｅ的输出流
+    int sheetIndex = 0;
+    WritableWorkbook wbook = null;
+    wbook = Workbook.createWorkbook(out);
+    try {
+        for (String id : ids) {   //一个ｉｄ一个sheet
+            logger.info("exportExcel enter looop  id is" + id);
+            String sheet = corpIdNameMap.get(id);
+            WritableSheet wsheet = wbook.createSheet(sheet, sheetIndex++); // sheet名称
+            WritableCellFormat cellFormatNumber = new WritableCellFormat();
+            cellFormatNumber.setAlignment(Alignment.RIGHT);
+            WritableCellFormat contentFromart = new WritableCellFormat(NumberFormats.TEXT);
+            int rowIndex = 0;
+            //第一行 （写第一行，即所有的列名）
+            wsheet.addCell(new Label(0, 0, "简历ID", contentFromart));
+            wsheet.addCell(new Label(1, 0, "用户UID", contentFromart));
+            //写列名对应的值：如果需要输出的志愿数大于一次处理的最大数则分批处理
+            List<CrResume> resumes = resumeCorpIdMap.get(id);
+            logger.info("exportExcel enter looop  resumes is" + resumes);
+            for (CrResume resume : resumes) {
+                rowIndex = rowIndex + 1;
+                wsheet.addCell(new Label(0, rowIndex, resume.getId() + "", contentFromart));
+                wsheet.addCell(new Label(1, rowIndex, resume.getUserId() + "", contentFromart));
+            }
+        }
+        wbook.write();／／循环完整之后再写入！
+        wbook.close();
+    } catch (Exception e) {
+        logger.info("exportExcel Exception 1");
+    } finally {
+        if (wbook != null) {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (Exception e) {
+                logger.info("exportExcel Exception 2");
+            }
+        }
+    }
+    return null;
+}
+spring:
+controller:
+@RequestMapping(value = "/exportExcel")
+public ModelAndView viewExcel(@RequestParam(value = "corpId") Long corpId, HttpServletRequest request, HttpServletResponse response) {
+    List list = new ArrayList();//讲数据放入ｌｉｓｔ中
+    List<CrResume> resumes = resumeService.selectByCorpId(corpId);
+    for (CrResume resume : resumes) {
+        if (!resume.isResumeStatus()) {
+            list.add(resume);
+        }
+    }
+    Map model = new HashMap();
+    model.put("data", list);
+    ViewExcel viewExcel = new ViewExcel();
+    return new ModelAndView(viewExcel, model);
+}
+ViewExcel.java：
+public class ViewExcel extends AbstractExcelView {
+
+    @Override
+    public void buildExcelDocument(Map model, HSSFWorkbook workbook,
+                                   HttpServletRequest request, HttpServletResponse response)
+            throws Exception {
+        System.out.println(HSSFWorkbook.class.getProtectionDomain().getCodeSource().getLocation());
+        HSSFSheet sheet = workbook.createSheet("数据");
+        List list = (List) model.get("data");
+        HSSFCellStyle dateStyle = workbook.createCellStyle();
+        dateStyle.setDataFormat(HSSFDataFormat.getBuiltinFormat("mm/dd/yyyy"));
+        int rowNum = 1;
+        setText(getCell(sheet, 0, 0), "aaaaaa");
+        setText(getCell(sheet, 0, 1), "bbbbbb");
+        for (Iterator iter = list.iterator(); iter.hasNext(); ) {
+            CrResume element = (CrResume) iter.next();
+            HSSFRow row = sheet.createRow(rowNum++);
+            row.createCell((short) 0)
+                    .setCellValue(element.getId()+"");
+            row.createCell((short) 1).setCellValue(element.getUserId());
+        }
+        String filename = "datas.xls";//设置下载时客户端Excel的名称
+        filename = MyUtils.encodeFilename(filename, request);//处理中文文件名
+        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-disposition", "attachment;filename=" + filename);
+        OutputStream ouputStream = response.getOutputStream();
+        workbook.write(ouputStream);
+        ouputStream.flush();
+        ouputStream.close();
+
+    }
+}

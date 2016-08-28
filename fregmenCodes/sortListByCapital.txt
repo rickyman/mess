@@ -1,0 +1,16 @@
+
+/**
+? instance your model
+*
+*/
+
+
+public List<？> sortByChinese(List<？> vos){
+    Collections.sort(vos, new Comparator<？>() {
+        @Override
+        public int compare(？ o1, ？ o2) {
+            return Collator.getInstance(Locale.CHINESE).compare(o1.getValue(), o2.getValue());
+        }
+    });
+    return  vos;
+}

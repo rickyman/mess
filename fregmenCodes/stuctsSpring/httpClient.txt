@@ -1,0 +1,78 @@
+StackOverFlow上找了样板代码(伟大的spring REST已经封装了这些样板式代码，文章底部提供)，经过自己额实验是好用的，其中（getHttpClient）绕过了SSL的验证：
+
+public static String doPost(JSONObject json) {
+    String resultUrl = null;
+    HttpClient client = new DefaultHttpClient();
+    HttpPost post = new HttpPost(requestURL);
+    JSONObject response = null;
+    try {
+
+        StringEntity s = new StringEntity(json.toString(),"UTF-8");//指定编码格式
+        s.setContentEncoding("UTF-8");
+        s.setContentType("application/json");//发送json数据需要设置contentType
+        post.setEntity(s);
+
+        client = getHttpClient(client);
+        HttpResponse res = client.execute(post);
+
+        if (res != null && res.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            HttpEntity entity = res.getEntity();
+            String result = EntityUtils.toString(entity);
+            response = new JSONObject(result);
+
+     /*
+   核心业务代码
+
+
+*/
+        }
+    } catch (Exception e) {
+
+        e.printStackTrace();
+        throw new RuntimeException(e);
+    }
+
+    return resultUrl;
+}
+
+
+private static HttpClient getHttpClient(HttpClient base) {
+    try {
+        log.debug("getHttpClient enter..");
+        SSLContext sslContext = SSLContext.getInstance("SSL");
+        sslContext.init(null,
+                new TrustManager[]{new X509TrustManager() {
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+
+                    public void checkClientTrusted(
+                            X509Certificate[] certs, String authType) {
+                    }
+
+                    public void checkServerTrusted(
+                            X509Certificate[] certs, String authType) {
+                    }
+                }}, new SecureRandom());
+        SSLSocketFactory socketFactory = new SSLSocketFactory(sslContext, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+        ClientConnectionManager connectionManager = base.getConnectionManager();
+        SchemeRegistry registry = connectionManager.getSchemeRegistry();
+        registry.register(new Scheme("https", 443, socketFactory));
+        log.debug("getHttpClient end..");
+        HttpParams params=base.getParams();
+        params.setParameter("charset", "UTF-8");
+        return new DefaultHttpClient(connectionManager, params);
+    } catch (Exception e) {
+        log.debug("getHttpClient Exception..");
+        e.printStackTrace();
+        return null;
+    }
+}
+上面的样板式代码，已经被REST封装好了，上面的一坨屎的代码，已经变成了下面的几行代码：
+ResponseEntity entity= new RestTemplate().getForEntity(requestURL,JSONObject.class,json);//直接返回JSONObject实体中
+entity.getStatusCode();//相应头中的状态码信息
+entity.getBody();//具体返回的数据
+其中getForEntity对应的http　的put (postForEntity对应post，具体的参数含义与get不同);
+第一个参数是：URL支持占位符（eg:http://demo/{id}/detail）;
+第二个参数是客户端接受的数据类型；
+第三个参数（可变）是请求的参数值，并按照顺序填充URL的占位符

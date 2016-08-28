@@ -1,0 +1,78 @@
+基本思路：
+取得其中一个较短的（减少循环次数）string的所有子串，看其是否在另一个字符串中，是就放入list，然后根据string长度排序list，最后返回list的index=0的string。
+下面是代码实现：
+
+
+
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+/**
+ * Created by ruiqizhang on 1/4/16.
+ */
+public class matchstring {
+    static boolean isSubString(String substring, String string) {
+
+        if (string.contains(substring)) {
+            return true;
+        }
+        return false;
+    }
+
+    public static void main(String[] args) {
+        String sub = "abcdeabc";
+        String string = "cbaeeabc";
+        System.out.println(convert("abc123"));
+       // matchLeftMaxSubstring(sub, string);
+        System.out.println( matchMaxSubstring(sub, string));
+    }
+
+    static String matchMaxSubstring(String string1, String string2,String... matchDirec) {
+       if ("right".equals(matchDirec)){
+           string1=convert(string1);
+           string2=convert(string2);
+       }
+        List<String> list = new ArrayList<String>();
+       String result=string1.contains(string2)?string2:(string2.contains(string1)?string1:"null");
+        if (result.equals("null")) {
+            if (string1.length() > string2.length()) {
+                System.out.println(string1);
+                String temp = string2;
+                string2 = string1;
+                string1 = temp;
+                System.out.println(string1);
+            }
+            for (int i = 0; i < string1.length(); i++) {
+                System.out.println(string1);
+                for (int j = i + 1; j < string1.length() + 1; j++) {
+                    String temp = string1.substring(i, j);
+                    System.out.println(temp);
+                    if (string2.contains(temp)) {
+                        list.add(temp);
+                    }
+                }
+            }
+            Collections.sort(list, new Comparator<String>() {
+                @Override
+                public int compare(String o1, String o2) {
+                    return o1.length() > o2.length() ? -1 : 1;
+                }
+            });
+            result=list.get(0);
+        }
+        System.out.println(list);
+        return result;
+    }
+    static  String convert(String string){
+        char[] chars=string.toCharArray();
+        int length=chars.length;
+        char[] convert=new char[length];
+        for (int i = 0; i <length ; i++) {
+        convert[length-1-i]=chars[i];
+        }
+        return  String.valueOf(convert);
+    }
+}

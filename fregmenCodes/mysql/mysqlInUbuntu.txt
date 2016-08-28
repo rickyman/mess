@@ -1,0 +1,38 @@
+
+ubuntu 系统下安装mysql 后：
+ １、
+    链接数据库：
+     mysql -h localhost -P 3306 -uroot -pmyword
+　　其中：
+　　-h 服务器地址
+　　-P 端口号
+　　-u 用户
+２、
+  启动mysql servic：
+   sudo /etc/init.d/mysql start
+   mysql 配置信息：  
+   sudo vi /etc/mysql/my.cnf 
+３、
+   修改密码：
+   编辑mysql配置文件my.cnf(目录上面已列出，如果不一致，就搜索下)，
+   在[mysqld]这个条目下加入
+    skip-grant-tables
+    保存退出后重启mysql    /etc/init.d/mysqld restart
+４、
+  　(接３)
+    mysql;
+    mysql> use mysql;
+    mysql> update user set password=password("新密码") where user="root";
+    mysql> flush privileges;
+    mysql> quit
+    改好之后，再修改一下my.cnf这个文件，把刚才加入的"skip-grant-tables"这行删除，保存退出再重启mysql。
+５、
+    数据库复制：
+    mysqldump -h 192.168.27.54 -P 3331  -udj_t -pda@jie.123 --opt --compress DB_CAMPUS --skip-lock-tables | mysql -     h localhost -P 3306 -uroot -pdajie0818 DB_CAMPUS_LOCAL
+    其中：
+      mysqldump 　mysql 内部复制命令
+　  --opt　　　　                      操作　
+　  --compress                          压缩
+　  DB_CAMPUS                      需要拷贝的数据库
+　  DB_CAMPUS_LOCAL        目的数据库
+
