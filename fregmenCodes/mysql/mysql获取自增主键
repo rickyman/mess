@@ -1,0 +1,20 @@
+mysql 获取自增主键:
+
+
+1 在mapper中指定keyProperty属性，示例如下：  
+<insert id="insertGetId" parameterType="com.dajie.cts.orgauth.rm.model.RmUserLogin" useGeneratedKeys="true" keyProperty="id">
+   // insert 
+  </insert>
+  意思是返回这条记录的自增主键id 
+2 select last_insert_id
+<insert id="insertGetId" parameterType="com.dajie.cts.orgauth.rm.model.RmUserLogin" useGeneratedKeys="true" keyProperty="id">
+   // insert 
+ 
+<selectKey keyProperty="id" resultClass="java.lang.Long">
+SELECT LAST_INSERT_ID() AS value
+</selectKey>
+ </insert>
+ 这个语句的意思是返回最后一个写入数据库的id,但是在高并发多个数据表都有写入的情况，下，这个语句返回的就有可能是另外一张表刚刚写入的数据库id,这样根据这个id去查询就返回没有这个记录了.
+ 
+ 1 的方法是针对当前表的,2的方法是针对一次数据库链接的,
+ 
