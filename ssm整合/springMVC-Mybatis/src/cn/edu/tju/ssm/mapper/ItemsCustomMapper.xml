@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.edu.tju.ssm.mapper.ItemsCustomMapper" ><!-- cn.edu.tju.ssm.mapper.ItemsCustom对应mapper的权限定名 -->
+<!-- sql片段 ：建议把单表的写为sql片段，常用的查询条件都写出来-->
+<sql id="query_itemsCustom">
+ <if test="itemsCustom!=null">
+  <if test="itemsCustom.name!=null and itemsCustom.name!=''">
+   and name like '%${itemsCustom.name}%'
+  </if>
+  <if test="itemsCustom.id!=nulll">
+   and id=#{itemsCustom.id}
+  </if>
+ </if>
+</sql>
+<!-- 商品查询 -->
+<select id="queryItems" parameterType="cn.edu.tju.ssm.po.ItemsQueryVo" resultType="cn.edu.tju.ssm.po.ItemsCustom">
+ select * from items
+ <where>
+  <include refid="query_itemsCustom"></include>
+ </where>
+</select>
+</mapper>

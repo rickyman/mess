@@ -1,0 +1,6 @@
+此项目为ssm 为spring springMVC mybatis 的整合
+由于springMVC是spring的一个模块  故时spring和springmvc是无缝整合的，
+也即是不用整合。
+
+
+访问地址：http://localhost:8080/springMVC-Mybatis/items/queryItems.actions

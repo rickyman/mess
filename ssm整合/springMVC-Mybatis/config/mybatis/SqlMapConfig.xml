@@ -1,0 +1,25 @@
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+<!-- 全局参数的配置 -->
+<settings>
+<!-- 开启一级缓存 -->
+<setting name="lazyLoadingEnabled" value="true"/>
+<setting name="aggressiveLazyLoading" value="false"/>
+<!-- 开启二级缓存 -->
+<setting name="cacheEnabled" value="true"/>
+</settings>
+
+<typeAliases>
+<!--别名定义 -->
+<!--批量定义别名  别名默认为类名，首字母小写或者大写-->
+<package name="cn.edu.tju.ssm.po"/>
+</typeAliases>
+
+<!--  配置mapper -->
+<!-- <mappers>
+ 批量配置mapper接口 
+ <package name="cn.edu.tju.ssm.mapper"/>
+</mappers>由于使用了spring和mybatis整合后的mapper扫描器所以这里可以省略不写 -->
+</configuration>
