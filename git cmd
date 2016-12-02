@@ -1,0 +1,20 @@
+git init
+vi .gitignore   
+/**
+*
+.idea/
+.iml
+.classpath
+target/
+**/
+
+
+
+
+git add README.md   ...  //这里要注意 最好一个个加
+
+git commit -m "first commit"
+
+git remote add origin https://github.com/rickyman/jiazhao.git
+
+git push -u origin master
