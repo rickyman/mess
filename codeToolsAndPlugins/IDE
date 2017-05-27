@@ -1,0 +1,41 @@
+15年8月入职大街网到17年6月离职，期间用到的工具，现整理如下：
+  编程工具是：idea
+  1、 mvn 相关插件
+     mybatis自动生成vo xml文件：
+             mybatis-generator
+      依赖：
+                        <plugin>
+                             <groupId>org.mybatis.generator</groupId>
+                             <artifactId>mybatis-generator-maven-plugin</artifactId>
+                             <version>1.3.2</version>
+                             <configuration>
+                                 <verbose>true</verbose>
+                                 <overwrite>true</overwrite>
+                             </configuration>
+                         </plugin>
+       其他编译 清除 打包插件
+   2 idea相关
+        WakaTime : 周统计工程耗费时间、编程语言、IDE、操作系统
+        IdeaVim  : 支持vi编码
+        Lombok   : 代码简介必备，省去getter/setter tostring等。多种注解简化代码
+        Markdown Navigator： 暂时没用到，tag下
+   3 chrome相关
+        postman   : restfull接口测试工具，模拟get/post，并且支持json作为参数
+        HostAdmin : host切换工具，方便（基于浏览器的，不是针对整个环境的，所以后期我用的host switcher）
+        LastPass  : 密码记忆工具
+        JSONView  ： json数据形式展开
+        Kaiserapps： 批量生成sql工具
+   4 其他系统工具
+       terminal ： 终端分屏，切换方便
+       Mysql Workbench: mysql客户端，models生成表之间关系很方便
+   5 常用命令
+       vi ~/.bashrc  ：增加alias 自定义命令，
+       xkill  :  强制杀死指定窗口（治疗页面卡死）
+       vi less cat  : grep 管道，？搜索
+       awk
+       crontab -l crontab -e 查看、编辑系统定时任务
+       ps -ef | grep 端口号  查看某工程运行情况
+
+
+
+        
